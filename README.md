@@ -25,3 +25,7 @@ Requierements
  - desire to fun :)
 
 
+Diagram over protoboard
+
+
+![Diagram](http://www.idun.com.mx/images/ardutop_bb.png?raw=true)
