@@ -30,14 +30,14 @@ Image2GLCD.exe by Jirawat Kongkaen http://avrportal.com
 /********************************************************************
 Adapted by Edgar Casanova Cardoz - Diciembre 2014
 http://idun.com.mx
-Display bitmap images on PCD8544 GLCD
+ARDUTOP System monitor for PC Gamers
 
 ********************************************************************/
 
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
-#include <MemoryFree.h>
+#include <MemoryFree.h>  //not necesary
 
 // Please use a level shifter (ex. 74HC4050) if you're using a 5V Arduino
 // pin 7 - Serial clock out (SCLK)
@@ -135,10 +135,10 @@ void loop() {
     
     display.fillRect(72, 40, 22, 7, WHITE);
     
-    drawBar(recurso[7], recurso[8], recurso[9], 0);
-    drawBar(recurso[18], recurso[19], recurso[20], 8);
-    drawBar(recurso[29], recurso[30], recurso[31], 16);
-    drawBar(recurso[40], recurso[41], recurso[42], 24);    
+    drawBar(recurso[6], recurso[7], recurso[8], 0);
+    drawBar(recurso[17], recurso[18], recurso[19], 8);
+    drawBar(recurso[28], recurso[29], recurso[30], 16);
+    drawBar(recurso[39], recurso[40], recurso[41], 24);    
     display.display();
     Serial.end();    
     Serial.begin(9600);
