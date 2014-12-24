@@ -174,6 +174,7 @@ void drawBar(char b1, char b2, char b3, int inicio_barra){
   int b = atoi(buffer);
   b = b/5;
   display.fillRect(60, inicio_barra,  b, 7, BLACK);
+  display.fillRect(60, inicio_barra,  b, 7, BLACK);
 }
 
 void screensplash(){
