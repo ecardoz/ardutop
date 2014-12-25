@@ -1,37 +1,7 @@
-/*********************************************************************
-This is an example sketch for our Monochrome Nokia 5110 LCD Displays
-
-  Pick one up today in the adafruit shop!
-  ------> http://www.adafruit.com/products/338
-
-These displays use SPI to communicate, 4 or 5 pins are required to
-interface
-
-Adafruit invests time and resources providing this open source code,
-please support Adafruit and open-source hardware by purchasing
-products from Adafruit!
-
-Written by Limor Fried/Ladyada  for Adafruit Industries.
-BSD license, check license.txt for more information
-All text above, and the splash screen must be included in any 
-redistribution
-*********************************************************************/
-
-/********************************************************************
-Modified by Siew Wai Hung - February 2013
-http://waihung.net
-Display bitmap images on PCD8544 GLCD
-Bitmap images are 80 x 45 in size
-MSB to LSB Left to Right
-
-Thanks to Adafruit's Library and 
-Image2GLCD.exe by Jirawat Kongkaen http://avrportal.com
-********************************************************************/
-
 /********************************************************************
 Adapted by Edgar Casanova Cardoz - Diciembre 2014
 http://idun.com.mx
-Display bitmap images on PCD8544 GLCD
+Ardutop
 
 ********************************************************************/
 
