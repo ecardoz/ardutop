@@ -8,7 +8,7 @@ Ardutop
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
-#include <MemoryFree.h>
+#include <MemoryFree.h>   // no es necesario
 
 const unsigned char PROGMEM idun [] = {
 0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,
@@ -81,7 +81,7 @@ void setup()   {
   Serial.begin(9600);
   display.begin();
 
-  pinMode(2, INPUT);
+  //pinMode(2, INPUT);  //se eliminará
   
   for(int i=0; i<=50; i++){
     display.setContrast(i);
@@ -108,19 +108,15 @@ void loop() {
     monitorBase();
     
     printCpuPercent(35, 0, stream[0],  stream[1],  stream[2]);
-    //display.fillRect(60, 0,  20, 7, WHITE);    
     drawBar(stream[0],  stream[1],  stream[2],  0);
     
     printCpuPercent(35, 8, stream[3],  stream[4],  stream[5]);
-    //display.fillRect(60, 8,  20, 7, WHITE);
     drawBar(stream[3],  stream[4],  stream[5],  8);
     
     printCpuPercent(35, 16, stream[6],  stream[7],  stream[8]);
-    //display.fillRect(60, 16,  20, 7, WHITE);
     drawBar(stream[6],  stream[7],  stream[8],  16);
     
     printCpuPercent(35, 24, stream[9],  stream[10], stream[11]);
-    //display.fillRect(60, 24,  20, 7, WHITE);
     drawBar(stream[9],  stream[10], stream[11], 24);    
     
     printMem(35, 32, stream[12], stream[13], stream[14], stream[15]);
