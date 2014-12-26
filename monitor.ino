@@ -106,7 +106,6 @@ void loop() {
   if(Serial.available()){
     delay(10);
     Serial.readBytes(stream, sizeStream);
-    //Serial.println(stream);
     Serial.flush();
     monitorBase();
     
@@ -129,15 +128,6 @@ void loop() {
   int p = analogRead(potPin);
   analogWrite(led,p/5);
   
-}
-
-void screensplash(){
-  int b = 1;
-  display.clearDisplay();
-  display.drawBitmap(0, 0, idun, 84, 48, BLACK);
-  display.display();
-  delay(500);
-  display.clearDisplay();
 }
 
 //void drawBar(char b1, char b2, char b3, int inicio_barra){
@@ -210,4 +200,13 @@ void monitorBase(){
   display.setCursor(0, 0);
   display.println("CPU 0:   %\nCPU 1:   %\nCPU 2:   %\nCPU 3:   %\nuRAM:     MB\nfRAM:     MB");
   display.display();
+}
+
+void screensplash(){
+  int b = 1;
+  display.clearDisplay();
+  display.drawBitmap(0, 0, idun, 84, 48, BLACK);
+  display.display();
+  delay(500);
+  display.clearDisplay();
 }
