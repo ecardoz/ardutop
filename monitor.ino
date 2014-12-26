@@ -1,14 +1,17 @@
 /********************************************************************
 Adapted by Edgar Casanova Cardoz - Diciembre 2014
 http://idun.com.mx
-Ardutop
+email: ecardoz@idun.com.mx
+twitter: @ecardoz
+
+Ardutop: Arduino System Monitor for Linux
 
 ********************************************************************/
 
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
-#include <MemoryFree.h>   // no es necesario
+
 
 const unsigned char PROGMEM idun [] = {
 0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,
@@ -107,17 +110,14 @@ void loop() {
     Serial.flush();
     monitorBase();
     
-    printCpuPercent(35, 0, stream[0],  stream[1],  stream[2]);
-    drawBar(stream[0],  stream[1],  stream[2],  0);
+    printCpuPercent(35, 0, stream[0],  stream[1],  stream[2], 0);
     
-    printCpuPercent(35, 8, stream[3],  stream[4],  stream[5]);
-    drawBar(stream[3],  stream[4],  stream[5],  8);
+    printCpuPercent(35, 8, stream[3],  stream[4],  stream[5], 8);
     
-    printCpuPercent(35, 16, stream[6],  stream[7],  stream[8]);
-    drawBar(stream[6],  stream[7],  stream[8],  16);
+    printCpuPercent(35, 16, stream[6],  stream[7],  stream[8], 16);
     
-    printCpuPercent(35, 24, stream[9],  stream[10], stream[11]);
-    drawBar(stream[9],  stream[10], stream[11], 24);    
+    printCpuPercent(35, 24, stream[9],  stream[10], stream[11], 24);
+        
     
     printMem(35, 32, stream[12], stream[13], stream[14], stream[15]);
     printMem(35, 40, stream[16], stream[17], stream[18], stream[19]);
@@ -131,18 +131,6 @@ void loop() {
   
 }
 
-void drawBar(char b1, char b2, char b3, int inicio_barra){
-  char buffer[4];
-  buffer[0] = b1;
-  buffer[1] = b2;
-  buffer[2] = b3;
-  buffer[3] = '\0';
-  int b = atoi(buffer);
-  b = b/5;
-  display.fillRect(60, inicio_barra,  b, 7, BLACK);
-  display.drawRect(60, inicio_barra, 21, 7, BLACK);
-}
-
 void screensplash(){
   int b = 1;
   display.clearDisplay();
@@ -152,7 +140,19 @@ void screensplash(){
   display.clearDisplay();
 }
 
-void printCpuPercent(int x, int y, char b1, char b2, char b3){
+//void drawBar(char b1, char b2, char b3, int inicio_barra){
+//  char buffer[4];
+//  buffer[0] = b1;
+//  buffer[1] = b2;
+//  buffer[2] = b3;
+//  buffer[3] = '\0';
+//  int b = atoi(buffer);
+//  b = b/5;
+//  display.fillRect(61, inicio_barra,  b, 7, BLACK);
+//  display.drawRect(60, inicio_barra, 22, 7, BLACK); //marco de la barra
+//}
+
+void printCpuPercent(int x, int y, char b1, char b2, char b3, int inicio_barra){
   char buffer[4];
   buffer[0] = b1;
   buffer[1] = b2;
@@ -160,7 +160,20 @@ void printCpuPercent(int x, int y, char b1, char b2, char b3){
   buffer[3] = '\0';
   display.setTextSize(1);
   display.setCursor(x, y);
+  int b = atoi(buffer);
+  if(b <100){
+    if(b <10){
+      buffer[0] = ' ';
+      buffer[1] = ' ';
+    }
+    else{
+      buffer[0] = ' ';
+    }
+  }
   display.println(buffer);
+  b = b/5;
+  display.fillRect(61, inicio_barra,  b, 7, BLACK);
+  display.drawRect(60, inicio_barra, 22, 7, BLACK); //marco de la barra
 }
 
 void printMem(int x, int y, char b1, char b2, char b3, char b4){
@@ -172,6 +185,22 @@ void printMem(int x, int y, char b1, char b2, char b3, char b4){
   buffer[4] = '\0';
   display.setTextSize(1);
   display.setCursor(x, y);
+    int b = atoi(buffer);
+  if(b < 1000){
+    if(b < 100){
+      if(b < 10){
+        buffer[0] = ' ';
+        buffer[1] = ' ';
+        buffer[2] = ' ';
+      }else{
+        buffer[0] = ' ';
+        buffer[1] = ' ';
+      }
+    }
+    else{
+      buffer[0] = ' ';
+    }
+  }
   display.println(buffer);
 }
 
