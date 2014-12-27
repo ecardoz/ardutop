@@ -12,7 +12,6 @@ Ardutop: Arduino System Monitor for Linux
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 
-
 const unsigned char PROGMEM idun [] = {
 0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,
 0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,
@@ -84,8 +83,6 @@ void setup()   {
   Serial.begin(9600);
   display.begin();
 
-  //pinMode(2, INPUT);  //se eliminará
-  
   for(int i=0; i<=50; i++){
     display.setContrast(i);
     delay(5);
@@ -98,15 +95,17 @@ void setup()   {
 
 
 void loop() {
-  int sizeStream = 20;
+  int sizeStream  = 28;
+  int total_ram   = 0;
   char stream[sizeStream];
   display.clearDisplay();
   display.setTextSize(1);
   display.setCursor(0,0);
+  
   if(Serial.available()){
-    delay(10);
+    delay(10);  //proporciona cierta "estabilidad" a la lectura de datos
     Serial.readBytes(stream, sizeStream);
-    Serial.flush();
+    Serial.flush();  //muy importante borrar lo que haya en el puerto
     monitorBase();
     
     printCpuPercent(35, 0, stream[0],  stream[1],  stream[2], 0);
@@ -116,10 +115,14 @@ void loop() {
     printCpuPercent(35, 16, stream[6],  stream[7],  stream[8], 16);
     
     printCpuPercent(35, 24, stream[9],  stream[10], stream[11], 24);
-        
     
-    printMem(35, 32, stream[12], stream[13], stream[14], stream[15]);
-    printMem(35, 40, stream[16], stream[17], stream[18], stream[19]);
+    printMem(30, 32, stream[12], stream[13], stream[14], stream[15]);
+    printMem(60, 32, stream[24], stream[25], stream[26], stream[27]);
+    
+    draw_mem_bar(
+      stream[12], stream[13], stream[14], stream[15], 
+      stream[16], stream[17], stream[18], stream[19], 
+      stream[20], stream[21], stream[22], stream[23]);
     
     display.display();
     Serial.end();    
@@ -127,20 +130,75 @@ void loop() {
   }
   int p = analogRead(potPin);
   analogWrite(led,p/5);
+}
+
+void draw_mem_bar(
+  char u1, char u2, char u3, char u4, 
+  char f1, char f2, char f3, char f4, 
+  char b1, char b2, char b3, char b4){
+    
+    char buf_used_real_ram[] = {u1, u2, u3, u4, '\0'};
+    char buf_free_ram[]      = {f1, f2, f3, f4, '\0'};
+    char buf_buffer_ram[]    = {b1, b2, b3, b4, '\0'};
+    
+    int used_real_ram = atoi(buf_used_real_ram);
+    int buffer_ram    = atoi(buf_buffer_ram);
+    int free_ram      = atoi(buf_free_ram);
+//    Serial.print("RAM used real:     ");
+//    Serial.println(used_real_ram);
+//    Serial.print("RAM cache:     ");
+//    Serial.println(buffer_ram);
+//    Serial.print("RAM free:     ");
+//    Serial.println(free_ram);
+    
+    int total_ram = used_real_ram + buffer_ram + free_ram;
+//    Serial.print("RAM total:     ");
+//    Serial.println(total_ram);
+    int punto = total_ram/82;
+    
+    display.drawRect(0, 40, 84, 8, BLACK); //marco de la barra
+    
+    //barra memoria usada:
+    used_real_ram = used_real_ram/punto;
+    display.fillRect(1, 41,  used_real_ram, 7, BLACK);
+    
+    //buffer memoria ram:
+//    Serial.println(buffer_ram);
+    buffer_ram = buffer_ram/punto;
+//    Serial.println(buffer_ram);
+    draw_dotted_bar(used_real_ram+1, 41, buffer_ram);
   
 }
 
-//void drawBar(char b1, char b2, char b3, int inicio_barra){
-//  char buffer[4];
-//  buffer[0] = b1;
-//  buffer[1] = b2;
-//  buffer[2] = b3;
-//  buffer[3] = '\0';
-//  int b = atoi(buffer);
-//  b = b/5;
-//  display.fillRect(61, inicio_barra,  b, 7, BLACK);
-//  display.drawRect(60, inicio_barra, 22, 7, BLACK); //marco de la barra
-//}
+void draw_dotted_bar(int x, int y, int limit){
+  for(int i=0; i<6; i++){
+    if(i%2==0){
+      draw_dotted_line(x, y+i, limit);
+    }else{
+      draw_dotted_line(x-1, y+i, limit);
+    }
+  }
+}
+
+void draw_dotted_line(int x, int y, int limit){
+  for(int i=0; i<=limit; i++){
+    if(i%2==0){
+      display.drawPixel(x+i, y, BLACK);
+    }else{
+      display.drawPixel(x+i, y, WHITE);
+    }
+  }
+}
+
+
+void screensplash(){
+  int b = 1;
+  display.clearDisplay();
+  display.drawBitmap(0, 0, idun, 84, 48, BLACK);
+  display.display();
+  delay(500);
+  display.clearDisplay();
+}
 
 void printCpuPercent(int x, int y, char b1, char b2, char b3, int inicio_barra){
   char buffer[4];
@@ -198,15 +256,6 @@ void monitorBase(){
   display.clearDisplay();
   display.setTextSize(1);
   display.setCursor(0, 0);
-  display.println("CPU 0:   %\nCPU 1:   %\nCPU 2:   %\nCPU 3:   %\nuRAM:     MB\nfRAM:     MB");
+  display.println("CPU 0:   %\nCPU 1:   %\nCPU 2:   %\nCPU 3:   %\nRAM :    /");
   display.display();
-}
-
-void screensplash(){
-  int b = 1;
-  display.clearDisplay();
-  display.drawBitmap(0, 0, idun, 84, 48, BLACK);
-  display.display();
-  delay(500);
-  display.clearDisplay();
 }
