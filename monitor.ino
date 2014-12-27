@@ -127,6 +127,7 @@ void loop() {
     display.display();
     Serial.end();    
     Serial.begin(9600);
+    Serial.flush();  //muy importante borrar lo que haya en el puerto
   }
   int p = analogRead(potPin);
   analogWrite(led,p/5);
