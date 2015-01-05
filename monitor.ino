@@ -76,7 +76,6 @@ Adafruit_PCD8544 display = Adafruit_PCD8544(7, 6, 5, 3, 4);
 int potPin = 5;    // select the input pin for the potentiometer
 int ledPin = 13;   // select the pin for the LED
 int val = 0;       // variable to store the value coming from the sensor
-int led = 9;       // led azul del LCD
 
 void setup()   {
   pinMode(ledPin, OUTPUT); 
@@ -90,7 +89,7 @@ void setup()   {
   
   screensplash();
   display.setContrast(50);
-  analogWrite(led,250);  
+  analogWrite(led,255);  
 }
 
 
@@ -129,8 +128,6 @@ void loop() {
     Serial.begin(9600);
     Serial.flush();  //muy importante borrar lo que haya en el puerto
   }
-  int p = analogRead(potPin);
-  analogWrite(led,p/5);
 }
 
 void draw_mem_bar(
@@ -145,16 +142,8 @@ void draw_mem_bar(
     int used_real_ram = atoi(buf_used_real_ram);
     int buffer_ram    = atoi(buf_buffer_ram);
     int free_ram      = atoi(buf_free_ram);
-//    Serial.print("RAM used real:     ");
-//    Serial.println(used_real_ram);
-//    Serial.print("RAM cache:     ");
-//    Serial.println(buffer_ram);
-//    Serial.print("RAM free:     ");
-//    Serial.println(free_ram);
     
     int total_ram = used_real_ram + buffer_ram + free_ram;
-//    Serial.print("RAM total:     ");
-//    Serial.println(total_ram);
     int punto = total_ram/82;
     
     display.drawRect(0, 40, 84, 8, BLACK); //marco de la barra
@@ -164,9 +153,8 @@ void draw_mem_bar(
     display.fillRect(1, 41,  used_real_ram, 7, BLACK);
     
     //buffer memoria ram:
-//    Serial.println(buffer_ram);
     buffer_ram = buffer_ram/punto;
-//    Serial.println(buffer_ram);
+    
     draw_dotted_bar(used_real_ram+1, 41, buffer_ram);
   
 }
