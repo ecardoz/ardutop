@@ -190,11 +190,12 @@ void screensplash(){
 }
 
 void printCpuPercent(int x, int y, char b1, char b2, char b3, int inicio_barra){
-  char buffer[4];
+  char buffer[] = {b1, b2, b3, '\0'};
+  /* char buffer[4];
   buffer[0] = b1;
   buffer[1] = b2;
   buffer[2] = b3;
-  buffer[3] = '\0';
+  buffer[3] = '\0'; */
   display.setTextSize(1);
   display.setCursor(x, y);
   int b = atoi(buffer);
@@ -214,12 +215,13 @@ void printCpuPercent(int x, int y, char b1, char b2, char b3, int inicio_barra){
 }
 
 void printMem(int x, int y, char b1, char b2, char b3, char b4){
-  char buffer[5];
+  char buffer[] = {b1, b2, b3, b4, '\0'};
+  /* char buffer[5];
   buffer[0] = b1;
   buffer[1] = b2;
   buffer[2] = b3;
   buffer[3] = b4;
-  buffer[4] = '\0';
+  buffer[4] = '\0'; */
   display.setTextSize(1);
   display.setCursor(x, y);
     int b = atoi(buffer);
