@@ -73,20 +73,9 @@ const unsigned char PROGMEM idun [] = {
 
 Adafruit_PCD8544 display = Adafruit_PCD8544(7, 6, 5, 3, 4);
 
-int potPin = 5;    // select the input pin for the potentiometer
-int ledPin = 13;   // select the pin for the LED
-int val = 0;       // variable to store the value coming from the sensor
-
 void setup()   {
-  pinMode(ledPin, OUTPUT); 
   Serial.begin(9600);
   display.begin();
-
-  for(int i=0; i<=50; i++){
-    display.setContrast(i);
-    delay(5);
-  }
-  
   screensplash();
   display.setContrast(50);
   analogWrite(led,255);  
