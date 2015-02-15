@@ -4,6 +4,7 @@
 # web: www.idun.com.mx
 # Comunicacion con el puerto serial
 # Se envian datos a la placa Arduino
+
 from time import sleep
 import time
 import serial
@@ -93,13 +94,26 @@ class FreeMemLinux(object):
     # def swap_used(self):
     #     return self._convert * self._swapu
 
+def agregar_ceros(numero_sin_ceros):
+    strm = ""
+    if int(numero_sin_ceros) < 1000:
+        if int(numero_sin_ceros) < 100:
+            if int(numero_sin_ceros) < 10:
+                strm += "000"
+            else:
+                strm += "00"
+        else:
+            strm += "0"
+    strm += numero_sin_ceros
+    return strm
+
 print "Iniciando... "
 a = True
 current_milli_time = lambda: int(round(time.time() * 1000))
 try:
-    puerto = serial.Serial('/dev/ttyACM0',9600)
+    puerto = serial.Serial('/dev/ttyUSB0',9600)
     print "Arduino conectado"
-    sleep(3)
+    sleep(1)
 except Exception:
     a = False
     print "No hay Arduino conectado en el puerto especificado"
@@ -114,8 +128,8 @@ while a:
     used_ram       = str(int(round(f.used)/1024))
     free_ram       = str(int(round(f.total-f.used))/1024)
     total_ram      = str(int(used_ram) + int(free_ram))
-    perCPU         = psutil.cpu_percent(interval=1, percpu=True)    #Array
-
+    perCPU         = psutil.cpu_percent(interval=0.25, percpu=True)    #Array
+    
     for i in range(len(perCPU)):
         if int(round(perCPU[i]))<100:
             if int(round(perCPU[i]))<10:
@@ -124,52 +138,10 @@ while a:
                 stream += "0"
         stream += str(int(round(perCPU[i])))
 
-    if int(used_real_ram) < 1000:
-        if int(used_real_ram) < 100:
-            if int(used_real_ram) < 10:
-                stream += "000"
-            else:
-                stream += "00"
-        else:
-            stream += "0"
-    stream += used_real_ram
-
-    if int(free_ram) < 1000:
-        if int(free_ram) < 100:
-            if int(free_ram) < 10:
-                stream += "000"
-            else:
-                stream += "00"
-        else:
-            stream += "0"
-    stream += free_ram
-
-    if int(cache_ram) < 1000:
-        if int(cache_ram) < 100:
-            if int(cache_ram) < 10:
-                stream += "000"
-            else:
-                stream += "00"
-        else:
-            stream += "0"
-    stream += cache_ram
-
-    if int(total_ram) < 1000:
-        if int(total_ram) < 100:
-            if int(total_ram) < 10:
-                stream += "000"
-            else:
-                stream += "00"
-        else:
-            stream += "0"
-    stream += total_ram
+    stream += agregar_ceros(used_real_ram)
+    stream += agregar_ceros(free_ram)
+    stream += agregar_ceros(cache_ram)
+    stream += agregar_ceros(total_ram)
 
     puerto.write(stream)
-    print stream + "|" + str(current_milli_time() - milli) +"|"+str(len(stream))
-
-    # print "RAM used real:  " + used_real_ram #
-    # print "RAM cache:      " + cache_ram
-    # print "RAM used:       " + used_ram
-    # print "RAM free:       " + free_ram #
-    # print "RAM total:      " + str(int(used_ram) + int(free_ram))
-    #print "RAM total:      " + str(int(used_real_ram) + int(cache_ram) + int(free_ram))
+    print str(current_milli_time() - milli) + "|" + time.ctime(time.time()) + " " + stream + "|" + str(len(stream))
