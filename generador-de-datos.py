@@ -82,53 +82,65 @@ class FreeMemLinux(object):
         """This is the free memory available for the user"""
         return self._convert *(self._free + self._buff + self._cached)
 
-    # @property
-    # def swap(self):
-    #     return self._convert * self._swapt
+    @property
+    def swap(self):
+        return self._convert * self._swapt
 
-    # @property
-    # def swap_free(self):
-    #     return self._convert * self._swapf
+    @property
+    def swap_free(self):
+        return self._convert * self._swapf
 
-    # @property
-    # def swap_used(self):
-    #     return self._convert * self._swapu
+    @property
+    def swap_used(self):
+        return self._convert * self._swapu
 
 def agregar_ceros(numero_sin_ceros):
     strm = ""
-    if int(numero_sin_ceros) < 1000:
-        if int(numero_sin_ceros) < 100:
-            if int(numero_sin_ceros) < 10:
+    if numero_sin_ceros < 1000:
+        if numero_sin_ceros < 100:
+            if numero_sin_ceros < 10:
                 strm += "000"
             else:
                 strm += "00"
         else:
             strm += "0"
-    strm += numero_sin_ceros
+    strm += str(numero_sin_ceros)
     return strm
 
 print "Iniciando... "
 a = True
 current_milli_time = lambda: int(round(time.time() * 1000))
+#sleep(5)
 try:
     puerto = serial.Serial('/dev/ttyUSB0',9600)
     print "Arduino conectado"
-    sleep(1)
+    sleep(3)
 except Exception:
     a = False
     print "No hay Arduino conectado en el puerto especificado"
-    
+
+total_ram = 0
+
 while a:
     puerto.flushOutput()
     stream         = ""
     milli          = current_milli_time()
-    f              = FreeMemLinux()
-    used_real_ram  = str(int(round(f.used_real))/1024)
-    cache_ram      = str(int(round(f.cached + f.buffers)/1024))
-    used_ram       = str(int(round(f.used)/1024))
-    free_ram       = str(int(round(f.total-f.used))/1024)
-    total_ram      = str(int(used_ram) + int(free_ram))
-    perCPU         = psutil.cpu_percent(interval=0.25, percpu=True)    #Array
+    #f              = FreeMemLinux()
+    #used_real_ram  = (int(round(f.used_real))/1024)
+    #cache_ram      = int(round(f.cached + f.buffers)/1024)
+    #used_ram       = int(round(f.used)/1024)
+    #free_ram       = int(round(f.total-f.used))/1024
+    #total_ram_aux  = int(used_ram) + int(free_ram)
+    perCPU         = psutil.cpu_percent(interval=0.20, percpu=True)    #Array
+
+    ram            = psutil.virtual_memory()
+    total_ram      = int(getattr(ram, "total")/1024)/1024
+    free_ram       = int(getattr(ram, "free")/1024)/1024
+    cache_ram      = int(getattr(ram, "cached")/1024)/1024 + int(getattr(ram, "buffers")/1024)/1024
+    used_real_ram  = total_ram - free_ram - cache_ram
+
+    #if total_ram_aux > total_ram:
+    #	total_ram = total_ram_aux
     
     for i in range(len(perCPU)):
         if int(round(perCPU[i]))<100:
@@ -137,6 +149,11 @@ while a:
             else:
                 stream += "0"
         stream += str(int(round(perCPU[i])))
+
+    #print "used ram: " + str(used_real_ram)
+    #print "free ram: " + str(free_ram)
+    #print "cache ram: " + str(cache_ram)
+    #print "total ram: " + str(total_ram)
 
     stream += agregar_ceros(used_real_ram)
     stream += agregar_ceros(free_ram)
